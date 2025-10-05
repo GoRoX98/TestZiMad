@@ -4,8 +4,10 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class PlayerController : MonoBehaviour
 {
-    public float _cameraSpeed = 1;
-    public float _moveSpeed   = 1;
+    [SerializeField] private GameObject _fxPrefab;
+    [SerializeField] private Transform _fxSpawnPosition;
+    [SerializeField] private float _cameraSpeed = 1;
+    [SerializeField] private float _moveSpeed   = 1;
     
     private Camera   _camera;
     private Animator _animator;
@@ -15,13 +17,14 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        _animator = this.GetComponent<Animator>();
+        _animator = GetComponent<Animator>();
         _camera   = Camera.main;
         if (_camera == null)
         {
             Debug.LogError("Main camera not found. Add the camera with MainCamera tag to the scene");
             enabled = false;
         }
+        _lastPosition  = transform.position;
     }
 
     private void Update()
@@ -54,11 +57,8 @@ public class PlayerController : MonoBehaviour
         _velosity = Vector3.zero;
     }
 
-    public void CreateFX(string prefabName)
+    public void CreateFX()
     {
-        var fxPrefab = Resources.Load<GameObject>(prefabName);
-        if(fxPrefab == null) Debug.LogErrorFormat("The prefab with name {0} not found in the Resources folder.", prefabName);
-
-        Instantiate(fxPrefab, this.transform.position, Quaternion.identity);
+        Instantiate(_fxPrefab, _fxSpawnPosition.position, Quaternion.identity);
     }
 }
